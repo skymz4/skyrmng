@@ -26,7 +26,7 @@ jobs:
         run: |
           g++ nightlytool.cpp -o nightlytool
           sudo chmod +x nightlytool
-          ./nifhtlytool
+          ./nightlytool
           mkdir -p ~/artifacts
           cp nightlytool ~/artifacts
           echo ::set-output name=commit_tag::$(git describe --abbrev=0 --tags)
