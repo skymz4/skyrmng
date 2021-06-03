@@ -57,5 +57,7 @@ int main(int argc, char* argv[]) {
   datafile.write(database);
   std::string command = "git stage " + databasefilenaem;
   system(command.c_str());
+  std::string command2 = "git stage " + fname;
+  system(command2.c_str());
   return 0;
 }
