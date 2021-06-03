@@ -5,26 +5,65 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-    
-  workflow_dispatch:
 
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    outputs:
+      commit_tag: ${{ steps.build.outputs.commit_tag }}
+      commit_hash: ${{ steps.build.outputs.commit_hash }}
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: set up
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          sudo apt update
+          sudo apt install build-essentials
+
+      - name: build
+        id: build
+        run: |
+          g++ nightlytool.cpp -o nightlytool
+          sudo chmod +x nightlytool
+          ./nifhtlytool
+          mkdir -p ~/artifacts
+          cp nightlytool ~/artifacts
+          echo ::set-output name=commit_tag::$(git describe --abbrev=0 --tags)
+          echo ::set-output name=commit_hash::$(git log --format=%h -1)
+      - name: upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          path: ~/artifacts/*
+          name: ubuntu
+publish_build:
+    runs-on: ubuntu-latest
+    name: Publish build to NPI-D7/nightlys
+    if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
+    needs: build
+    env:
+      COMMIT_TAG: ${{ needs.build.outputs.commit_tag }}
+      COMMIT_HASH: ${{ needs.build.outputs.commit_hash }}
+    outputs:
+      current_date: ${{ steps.commit.outputs.current_date }}
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: ubuntu
+          path: ubuntu
+
+      - name: Commit and push to NPI-D7/nightlys
+        id: commit
+        run: |
+          CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
+          echo ::set-output name=current_date::$CURRENT_DATE
+          git config --global user.email "tobid7@outlook.de"
+          git config --global user.name "Tobi-D7"
+          git clone --depth 1 https://${{ secrets.TOKEN }}@github.com/NPI-D7/nightlys.git
+          cd nightlys
+          cp ${{ github.workspace }}/ubuntu/* .
+          git stage .
+          git commit -m "nightlytool | $COMMIT_HASH"
+          git tag v$CURRENT_DATE
+          git push origin master v$CURRENT_DATE

@@ -6,7 +6,7 @@
 
 
 int main(int argc, char* argv[]) {  
-
+  std::string ver = "1.0.0";
   std::string Devname;
   std::string Repo;
   std::string fname;
@@ -14,8 +14,10 @@ int main(int argc, char* argv[]) {
   std::string Tag;
   std::string desc= "No Description";
   std::string committag;
+  
   if(argc < 6) {
-		printf("usage: nightlytool File.ini AppName RepoUser Repo Tag Commit_Hash Desc\n");
+    std::cout << "Version: " << "1.0.0" << std::endl;
+		std::cout << "usage: nightlytool File.ini AppName RepoUser Repo Tag Commit_Hash Desc" << std::endl;
 		return 1;
 	}
 
@@ -28,7 +30,10 @@ int main(int argc, char* argv[]) {
   committag= argv[6];
 
   mINI::INIFile file(fname);
+  mINI::INIFile datafile("database.ini");
   mINI::INIStructure ini;
+  mINI::INIStructure database;
+
   file.read(ini);
   
   std::string _3dsx = "https://github.com/" + Devname + "/" + Repo + "/releases/download/" + Tag + "/" + appname + ".3dsx";
@@ -42,5 +47,11 @@ int main(int argc, char* argv[]) {
   ini[Tag]["cia"] =   cia;
 
   file.write(ini);
+
+  //generate database
+  std::string dllink = "https://github.com/" + Devname + "/" + Repo + "/raw/master/" + fname;
+  database[appname]["data"] = dllink;
+
+  datafile.write(database);
   return 0;
 }
