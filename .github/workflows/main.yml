@@ -19,7 +19,7 @@ jobs:
       - name: set up
         run: |
           sudo apt update
-          sudo apt install build-essentials
+          sudo apt install g++
 
       - name: build
         id: build
