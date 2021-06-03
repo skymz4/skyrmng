@@ -17,6 +17,7 @@ int main(int argc, char* argv[]) {
   
   if(argc < 6) {
     std::cout << "Version: " << "1.0.0" << std::endl;
+    std::cout << "git stage command is included in this programm" << std::endl;
 		std::cout << "usage: nightlytool File.ini AppName RepoUser Repo Tag Commit_Hash Desc" << std::endl;
 		return 1;
 	}
@@ -30,9 +31,7 @@ int main(int argc, char* argv[]) {
   committag= argv[6];
 
   mINI::INIFile file(fname);
-  mINI::INIFile datafile("database.ini");
   mINI::INIStructure ini;
-  mINI::INIStructure database;
 
   file.read(ini);
   
@@ -49,9 +48,14 @@ int main(int argc, char* argv[]) {
   file.write(ini);
 
   //generate database
+  std::string databasefilenaem = Repo+ "-Database.ini";
   std::string dllink = "https://github.com/" + Devname + "/" + Repo + "/raw/master/" + fname;
+  mINI::INIFile datafile(databasefilenaem); 
+  mINI::INIStructure database;
   database[appname]["data"] = dllink;
 
   datafile.write(database);
+  std::string command = "git stage " + databasefilenaem;
+  system(command.c_str());
   return 0;
 }
