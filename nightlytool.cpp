@@ -52,6 +52,9 @@ int main(int argc, char* argv[]) {
   std::string dllink = "https://github.com/" + Devname + "/" + Repo + "/raw/master/" + fname;
   mINI::INIFile datafile(databasefilenaem); 
   mINI::INIStructure database;
+  database["info"]["repository"] = Repo;
+  database["info"]["user"] = Devname;
+
   database[appname]["data"] = dllink;
 
   datafile.write(database);
