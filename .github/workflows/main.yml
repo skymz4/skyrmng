@@ -72,7 +72,8 @@ jobs:
           git config --global user.name "Tobi-D7"
           git clone --depth 1 https://${{ secrets.TOKEN }}@github.com/NPI-D7/nightlys.git
           cd nightlys
-          cp ${{ github.workspace }}/*/* .
+          cp ${{ github.workspace }}/windows/* .
+          cp ${{ github.workspace }}/ubuntu/* .
           git stage ./*.exe
           git stage nightlytool
           git commit -m "nightlytool | $COMMIT_HASH"
