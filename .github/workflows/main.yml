@@ -34,11 +34,23 @@ jobs:
         with:
           path: ~/artifacts/*
           name: ubuntu
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build on Windows
+        shell: bash
+        run: g++ nightlytool.cpp -o nightlytool.exe
+      - name: "Publish build to GH Actions"
+        uses: actions/upload-artifact@v2
+        with:
+          path: nightlytool.exe
+          name: "windows"
   publish_build:
     runs-on: ubuntu-latest
     name: Publish build to NPI-D7/nightlys
     if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
-    needs: build
+    needs: build windows
     env:
       COMMIT_TAG: ${{ needs.build.outputs.commit_tag }}
       COMMIT_HASH: ${{ needs.build.outputs.commit_hash }}
@@ -60,7 +72,7 @@ jobs:
           git config --global user.name "Tobi-D7"
           git clone --depth 1 https://${{ secrets.TOKEN }}@github.com/NPI-D7/nightlys.git
           cd nightlys
-          cp ${{ github.workspace }}/ubuntu/* .
+          cp ${{ github.workspace }}/*/* .
           git stage .
           git commit -m "nightlytool | $COMMIT_HASH"
           git tag v$CURRENT_DATE
