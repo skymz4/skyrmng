@@ -57,11 +57,17 @@ jobs:
     outputs:
       current_date: ${{ steps.commit.outputs.current_date }}
     steps:
-      - name: Download artifacts
+      - name: Download artifacts ubuntu
         uses: actions/download-artifact@v2
         with:
           name: ubuntu
           path: ubuntu
+
+      - name: Download artifacts windows
+        uses: actions/download-artifact@v2
+        with:
+          name: windows
+          path: windows
 
       - name: Commit and push to NPI-D7/nightlys
         id: commit
