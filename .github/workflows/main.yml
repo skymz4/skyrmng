@@ -73,7 +73,8 @@ jobs:
           git clone --depth 1 https://${{ secrets.TOKEN }}@github.com/NPI-D7/nightlys.git
           cd nightlys
           cp ${{ github.workspace }}/*/* .
-          git stage .
+          git stage ./*.exe
+          git stage nightlytool
           git commit -m "nightlytool | $COMMIT_HASH"
           git tag v$CURRENT_DATE
           git push origin master v$CURRENT_DATE
