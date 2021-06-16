@@ -110,7 +110,7 @@ int main(int argc, char* argv[]) {
 	}
 
   AppType type = GetType(argv[8]);
-
+  GenFile(appd, type);
   //fname = argv[1];
   //appname = argv[2];
   //Devname = argv[3];
