@@ -55,8 +55,8 @@ int main(int argc, char* argv[]) {
   database["info"]["repository"] = Repo;
   database["info"]["user"] = Devname;
 
+  database[appname]["Name"] = appname;
   database[appname]["data"] = dllink;
-
   datafile.write(database);
   std::string command = "git stage " + databasefilenaem;
   system(command.c_str());
