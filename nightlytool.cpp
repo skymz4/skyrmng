@@ -37,6 +37,7 @@ AppType GetType(std::string tp)
   if (tp == "5")return FIRM3DSX;
   if (tp == "6")return CFW;
   if (tp == "7")return EVERYTHING;
+  else return EVERYTHING;
 }
 
 void GenFile(AppData appd, AppType type)
