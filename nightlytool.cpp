@@ -24,7 +24,8 @@ enum AppType
   FIRMCIA,
   FIRM3DSX,
   CFW,
-  EVERYTHING
+  EVERYTHING,
+  NOTHING
 };
 
 AppType GetType(std::string tp)
@@ -37,7 +38,7 @@ AppType GetType(std::string tp)
   if (tp == "5")return FIRM3DSX;
   if (tp == "6")return CFW;
   if (tp == "7")return EVERYTHING;
-  else return EVERYTHING;
+  else return NOTHING;
 }
 
 void GenFile(AppData appd, AppType type)
@@ -87,12 +88,19 @@ void GenFile(AppData appd, AppType type)
     ini[appd.Tag]["cia"] =   cia;
     ini[appd.Tag]["firm"] = firm;
     break;
+  case NOTHING:
+    break;
 
   }
   file.write(ini);
 }
 int main(int argc, char* argv[]) {  
-  
+  if(argc < 8) {
+    std::cout << "Version: " << "1.0.0" << std::endl;
+    std::cout << "git stage command is included in this programm" << std::endl;
+		std::cout << "usage: nightlytool File.ini AppName RepoUser Repo Tag Commit_Hash Desc seelist\n0:3dsx and cia\n1:3dsxonly\n2:ciaonly\n3:firm\n4:Firm and cia\n5:Firm and 3dsx\n6:cfw(boot.firm)\n7:3dsx, cia,firm\n" << std::endl;
+		return 1;
+	}
   AppData appd = {
     argv[1],
     argv[2],
@@ -102,23 +110,9 @@ int main(int argc, char* argv[]) {
     argv[6],
     argv[7]
   };
-  if(argc < 8) {
-    std::cout << "Version: " << "1.0.0" << std::endl;
-    std::cout << "git stage command is included in this programm" << std::endl;
-		std::cout << "usage: nightlytool File.ini AppName RepoUser Repo Tag Commit_Hash Desc seelist\n0:3dsx and cia\n1:3dsxonly\n2:ciaonly\n3:firm\n4:Firm and cia\n5:Firm and 3dsx\n6:cfw(boot.firm)\n7:3dsx, cia,firm\n" << std::endl;
-		return 1;
-	}
 
   AppType type = GetType(argv[8]);
   GenFile(appd, type);
-  //fname = argv[1];
-  //appname = argv[2];
-  //Devname = argv[3];
-  //Repo = argv[4];
-  //Tag= argv[5];
-  //if (argc > 6) desc= argv[7];
-  //committag= argv[6];
-
   //generate database
   std::string databasefilenaem = appd.Repo+ "-Database.ini";
   std::string dllink = "https://github.com/" + appd.Devname + "/" + appd.Repo + "/raw/master/" + appd.fname;
