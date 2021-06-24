@@ -13,6 +13,7 @@ struct AppData
   std::string Tag;
   std::string committag;
   std::string desc= "No Description";
+  std::string Author = "None";
 };
 std::string ver = "1.0.0";
 enum AppType
@@ -51,6 +52,7 @@ void GenFile(AppData appd, AppType type)
   ini[appd.Tag]["desc"] = appd.desc;
   ini[appd.Tag]["Version"] = appd.Tag;
   ini[appd.Tag]["commit_tag"] = appd.committag;
+  ini[appd.Tag]["Author"] = appd.Author;
 
   std::string _3dsx = "https://github.com/" + appd.Devname + "/" + appd.Repo + "/releases/download/" + appd.Tag + "/" + appd.appname + ".3dsx";
   std::string cia = "https://github.com/" + appd.Devname + "/" + appd.Repo + "/releases/download/" + appd.Tag + "/" + appd.appname + ".cia";
@@ -95,10 +97,10 @@ void GenFile(AppData appd, AppType type)
   file.write(ini);
 }
 int main(int argc, char* argv[]) {  
-  if(argc < 8) {
+  if(argc < 9) {
     std::cout << "Version: " << "1.0.0" << std::endl;
     std::cout << "git stage command is included in this programm" << std::endl;
-		std::cout << "usage: nightlytool File.ini AppName RepoUser Repo Tag Commit_Hash Desc seelist\n0:3dsx and cia\n1:3dsxonly\n2:ciaonly\n3:firm\n4:Firm and cia\n5:Firm and 3dsx\n6:cfw(boot.firm)\n7:3dsx, cia,firm\n" << std::endl;
+		std::cout << "usage: nightlytool File.ini AppName RepoUser Repo Tag Commit_Hash Desc seelist\n0:3dsx and cia\n1:3dsxonly\n2:ciaonly\n3:firm\n4:Firm and cia\n5:Firm and 3dsx\n6:cfw(boot.firm)\n7:3dsx, cia,firm\nAuthor\n" << std::endl;
 		return 1;
 	}
   AppData appd = {
@@ -108,7 +110,8 @@ int main(int argc, char* argv[]) {
     argv[4],
     argv[5],
     argv[6],
-    argv[7]
+    argv[7],
+    argv[9]
   };
 
   AppType type = GetType(argv[8]);
