@@ -92,7 +92,6 @@ void GenFile(AppData appd, AppType type)
     break;
   case NOTHING:
     break;
-
   }
   file.write(ini);
 }
