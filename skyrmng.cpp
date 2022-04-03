@@ -29,20 +29,38 @@ enum AppType
   NOTHING
 };
 
-AppType GetType(std::string tp)
+enum Sys
 {
-  if (tp == "0")return HB_Both;
-  if (tp == "1")return _3DSXONLY;
-  if (tp == "2")return CIAONLY;
-  if (tp == "3")return FIRM;
-  if (tp == "4")return FIRMCIA;
-  if (tp == "5")return FIRM3DSX;
-  if (tp == "6")return CFW;
-  if (tp == "7")return EVERYTHING;
+  WINDOWS,
+  LINUX,
+  EVERYTHING,
+  NONE
+};
+
+struct DATA_
+{
+  std::string link;
+  std::string filename;
+  std::string system_s;
+};
+
+Sys GetType(std::string tp)
+{
+  if (tp == "0")return WINDOWS;
+  if (tp == "1")return LINUX;
+  if (tp == "2")return EVERYTHING;
   else return NOTHING;
 }
 
-void GenFile(AppData appd, AppType type)
+DATA_ GenData(AppData appd, Sys type)
+{
+  DATA_ d;
+  d.link = "https://github.com/" + appd.Devname + "/" + appd.Repo + "/releases/download/" + appd.Tag + "/" + appd.appname + ".7z";
+  d.filename = appd.fname;
+  d.system_s = "windows";
+}
+
+void GenFile(AppData appd, Sys type)
 {
   mINI::INIFile file(appd.fname);
   mINI::INIStructure ini;

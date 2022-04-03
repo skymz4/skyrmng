@@ -24,9 +24,9 @@ jobs:
       - name: build
         id: build
         run: |
-          g++ nightlytool.cpp -o nightlytool
+          g++ skyrmng.cpp -o skyrmng
           mkdir -p ~/artifacts
-          cp nightlytool ~/artifacts
+          cp skyrmng ~/artifacts
           echo ::set-output name=commit_tag::$(git describe --abbrev=0 --tags)
           echo ::set-output name=commit_hash::$(git log --format=%h -1)
       - name: upload artifacts
@@ -40,15 +40,15 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build on Windows
         shell: bash
-        run: g++ nightlytool.cpp -o nightlytool.exe
+        run: g++ skyrmng.cpp -o skyrmng.exe
       - name: "Publish build to GH Actions"
         uses: actions/upload-artifact@v2
         with:
-          path: nightlytool.exe
+          path: skyrmng.exe
           name: "windows"
   publish_build:
     runs-on: ubuntu-latest
-    name: Publish build to NPI-D7/nightlys
+    name: Publish build to skymz4/builds
     if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
     needs: [build, windows]
     env:
@@ -69,19 +69,19 @@ jobs:
           name: windows
           path: windows
 
-      - name: Commit and push to NPI-D7/nightlys
+      - name: Commit and push to skymz4/builds
         id: commit
         run: |
           CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
           echo ::set-output name=current_date::$CURRENT_DATE
           git config --global user.email "tobid7@outlook.de"
           git config --global user.name "Tobi-D7"
-          git clone --depth 1 https://${{ secrets.TOKEN }}@github.com/NPI-D7/nightlys.git
-          cd nightlys
+          git clone --depth 1 https://${{ secrets.TOKEN }}@github.com/skymz4/builds.git
+          cd builds
           cp ${{ github.workspace }}/windows/* .
           cp ${{ github.workspace }}/ubuntu/* .
           git stage ./*.exe
-          git stage nightlytool
-          git commit -m "nightlytool | $COMMIT_HASH"
+          git stage skyrmng
+          git commit -m "skyrmng | $COMMIT_HASH"
           git tag v$CURRENT_DATE
           git push origin master v$CURRENT_DATE
