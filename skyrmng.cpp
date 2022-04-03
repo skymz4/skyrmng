@@ -17,16 +17,7 @@ struct AppData
 };
 std::string ver = "1.0.0";
 enum AppType
-{
-  HB_Both,
-  _3DSXONLY,
-  CIAONLY,
-  FIRM,
-  FIRMCIA,
-  FIRM3DSX,
-  CFW,
-  EVERYTHING,
-  NOTHING
+{ING
 };
 
 enum Sys
@@ -77,40 +68,6 @@ void GenFile(AppData appd, Sys type)
   std::string firm = "https://github.com/" + appd.Devname + "/" + appd.Repo + "/releases/download/" + appd.Tag + "/" + appd.appname + ".firm";
   std::string cfwfirm = "https://github.com/" + appd.Devname + "/" + appd.Repo + "/releases/download/" + appd.Tag + "/" + "boot.firm";
 
-  switch (type)
-  {
-  case HB_Both:
-    ini[appd.Tag]["3dsx"] =   _3dsx;
-    ini[appd.Tag]["cia"] =   cia;
-    break;
-  case _3DSXONLY:
-    ini[appd.Tag]["3dsx"] =   _3dsx;
-    break;
-  case CIAONLY:
-    ini[appd.Tag]["cia"] =   cia;
-    break;
-  case FIRM:
-    ini[appd.Tag]["firm"] =   firm;
-    break;
-  case FIRMCIA:
-    ini[appd.Tag]["firm"] =   firm;
-    ini[appd.Tag]["cia"] =   cia;
-    break;
-  case FIRM3DSX:
-    ini[appd.Tag]["3dsx"] =   _3dsx;
-    ini[appd.Tag]["firm"] =   firm;
-    break;
-  case CFW:
-    ini[appd.Tag]["cfwfirm"] =   cfwfirm;
-    break;
-  case EVERYTHING:
-    ini[appd.Tag]["3dsx"] =   _3dsx;
-    ini[appd.Tag]["cia"] =   cia;
-    ini[appd.Tag]["firm"] = firm;
-    break;
-  case NOTHING:
-    break;
-  }
   file.write(ini);
 }
 int main(int argc, char* argv[]) {  
@@ -130,8 +87,7 @@ int main(int argc, char* argv[]) {
     argv[7],
     argv[9]
   };
-
-  AppType type = GetType(argv[8]);
+  Sys type = GetType(argv[8]);
   GenFile(appd, type);
   //generate database
   std::string databasefilenaem = appd.Repo+ "-Database.ini";
