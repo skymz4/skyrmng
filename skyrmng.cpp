@@ -4,6 +4,18 @@
 #include <cstring>
 #include "ini.h"
 
+/*
+arg0 = filei
+arg1 = appname
+arg2 = reponame
+arg3 = repouser
+arg4 = tag
+arg5 = commit
+arg6 = desc
+arg7 = auth
+arg8 = sys
+arg9 = filedata
+*/
 struct AppData
 {
   std::string fname;
@@ -16,9 +28,6 @@ struct AppData
   std::string Author = "None";
 };
 std::string ver = "1.0.0";
-enum AppType
-{ING
-};
 
 enum Sys
 {
@@ -43,12 +52,25 @@ Sys GetType(std::string tp)
   else return NOTHING;
 }
 
-DATA_ GenData(AppData appd, Sys type)
+void SplitData(std::string dat, std::vector<std::string> split)
+{
+    std::vector<string> v;
+ 
+    std::stringstream ss(dat);
+ 
+    while (ss.good()) {
+        std::string substr;
+        std::getline(ss, substr, ',');
+        v.push_back(substr);
+    }
+ 
+    split = v;
+}
+DATA_ GenData(AppData appd, Sys type, std::string data)
 {
   DATA_ d;
-  d.link = "https://github.com/" + appd.Devname + "/" + appd.Repo + "/releases/download/" + appd.Tag + "/" + appd.appname + ".7z";
-  d.filename = appd.fname;
-  d.system_s = "windows";
+  d.link = "https://github.com/" + appd.Devname + "/" + appd.Repo + "/releases/download/" + appd.Tag + "/" + data + ".7z";
+  d.filename = data;
 }
 
 void GenFile(AppData appd, Sys type)
@@ -72,22 +94,31 @@ void GenFile(AppData appd, Sys type)
 }
 int main(int argc, char* argv[]) {  
   if(argc < 9) {
-    std::cout << "Version: " << "1.0.0" << std::endl;
+    std::cout << "Version: " << ver << std::endl;
     std::cout << "git stage command is included in this programm" << std::endl;
 		std::cout << "usage: nightlytool File.ini AppName RepoUser Repo Tag Commit_Hash Desc seelist\n0:3dsx and cia\n1:3dsxonly\n2:ciaonly\n3:firm\n4:Firm and cia\n5:Firm and 3dsx\n6:cfw(boot.firm)\n7:3dsx, cia,firm\nAuthor\n" << std::endl;
 		return 1;
 	}
   AppData appd = {
+    argv[0],
     argv[1],
-    argv[2],
-    argv[3],
     argv[4],
+    argv[3],
     argv[5],
     argv[6],
     argv[7],
-    argv[9]
+    argv[8]
   };
-  Sys type = GetType(argv[8]);
+  std::vector<DATA_> dataf;
+  std::vector<std::string> datax;
+  
+  Sys type = GetType(argv[9]);
+  SplitData(argv[10], datax);
+  for (int ll = 0; ll < datax.size(); ll++)
+  {
+      dataf.push_back(GenData(appd, type, datax[ll]));
+  }
+  
   GenFile(appd, type);
   //generate database
   std::string databasefilenaem = appd.Repo+ "-Database.ini";
